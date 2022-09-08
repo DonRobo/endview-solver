@@ -38,12 +38,14 @@ class EndviewGame(
         return options[x + y * size] ?: emptySet()
     }
 
-    fun toggleOptions(x: Int, y: Int, char: Int): Boolean {
-        require(char == 0 || char in 1..letters)
+    private fun getMutableOptions(x: Int, y: Int) = options.computeIfAbsent(x + y * size) {
+        mutableSetOf()
+    }
 
-        val set = options.computeIfAbsent(x + y * size) {
-            mutableSetOf()
-        }
+    fun toggleOptions(x: Int, y: Int, char: Int): Boolean {
+        require(char.isValidChar())
+
+        val set = getMutableOptions(x, y)
 
         return if (char in set) {
             set.remove(char)
@@ -56,9 +58,39 @@ class EndviewGame(
         }
     }
 
-    fun setLetter(x: Int, y: Int, letter: Int?) {
+    fun setOptions(x: Int, y: Int, options: Set<Int>): Boolean {
+        require(options.all { it.isValidChar() })
+
+        val oldOptions = this.options[x + y * size]
+        this.options[x + y * size] = options.toMutableSet()
+        return if (oldOptions != this.options[x + y * size]) {
+            updated()
+            true
+        } else {
+            false
+        }
+    }
+
+    fun removeOptions(x: Int, y: Int, options: Set<Int>): Boolean {
+        require(options.all { it.isValidChar() })
+
+        return getMutableOptions(x, y).removeAll(options).also {
+            if (it)
+                updated()
+        }
+    }
+
+    val allOptions = (0..letters).toSet()
+
+    fun setLetter(x: Int, y: Int, letter: Int?): Boolean {
+        val prev = setLetters[x + y * size]
         setLetters[x + y * size] = letter ?: -1
-        updated()
+        return if (prev != setLetters[x + y * size]) {
+            updated()
+            true
+        } else {
+            false
+        }
     }
 
     private fun updated() {
@@ -69,6 +101,10 @@ class EndviewGame(
 
     fun addUpdateListener(listener: () -> Unit) {
         updateListeners += listener
+    }
+
+    private fun Int.isValidChar(): Boolean {
+        return this == 0 || this in 1..letters
     }
 }
 

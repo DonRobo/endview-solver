@@ -19,6 +19,9 @@ dependencies {
 
     implementation("org.openjdk.nashorn:nashorn-core:15.4")
 
+    implementation("com.google.code.gson:gson:2.9.1")
+    implementation("com.github.salomonbrys.kotson:kotson:2.5.0")
+
     testImplementation(kotlin("test"))
 }
 

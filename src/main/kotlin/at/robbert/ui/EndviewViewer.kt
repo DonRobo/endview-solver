@@ -1,6 +1,7 @@
 package at.robbert.ui
 
 import at.robbert.EndviewGame
+import at.robbert.EndviewHintGenerator
 import at.robbert.toEndviewChar
 import java.awt.*
 import java.awt.event.*
@@ -16,33 +17,6 @@ private const val gridSize = 64
 
 private enum class BoardDirection {
     NORTH, SOUTH, EAST, WEST
-}
-
-private class HintComponent(
-    val game: EndviewGame,
-    val boardDirection: BoardDirection,
-    val position: Int,
-) : JComponent() {
-
-    override fun getPreferredSize(): Dimension {
-        return Dimension(gridSize, gridSize)
-    }
-
-    override fun paint(g: Graphics?) {
-        val g2 = g as Graphics2D
-        val hint = when (boardDirection) {
-            BoardDirection.NORTH -> game.northHints
-            BoardDirection.SOUTH -> game.southHints
-            BoardDirection.EAST -> game.eastHints
-            BoardDirection.WEST -> game.westHints
-        }[position]
-        val hintString = when (hint) {
-            0 -> ""
-            else -> hint.toEndviewChar().toString()
-        }
-        g2.drawString(hintString, 30, 30)
-    }
-
 }
 
 private class EndviewComponent(
@@ -67,15 +41,21 @@ private class EndviewComponent(
     init {
         cellSize = 64f
 
-        selectCell(3, 3)
-
         isFocusable = true
         addKeyListener(object : KeyListener {
             override fun keyTyped(e: KeyEvent?) {
             }
 
             override fun keyPressed(e: KeyEvent) {
-                this@EndviewComponent.keyPressed(e)
+                if (e.keyChar == 'r') {
+                    for (y in 0 until game.size) {
+                        for (x in 0 until game.size) {
+                            game.setOptions(x, y, setOf())
+                            game.setLetter(x, y, null)
+                        }
+                    }
+                } else
+                    this@EndviewComponent.keyPressed(e)
             }
 
             override fun keyReleased(e: KeyEvent?) {
@@ -87,7 +67,11 @@ private class EndviewComponent(
             }
 
             override fun mousePressed(e: MouseEvent) {
-                this@EndviewComponent.mouseClicked(e)
+                if (e.button == MouseEvent.BUTTON1)
+                    this@EndviewComponent.mouseClicked(e)
+                else {
+                    EndviewHintGenerator(game).generateSomeHints()
+                }
             }
 
             override fun mouseReleased(e: MouseEvent?) {
@@ -287,7 +271,8 @@ class EndviewViewer(
     private val frame = JFrame("Endview")
 
     init {
-        frame.add(EndviewComponent(game))
+        frame.layout = BorderLayout()
+        frame.add(EndviewComponent(game), BorderLayout.CENTER)
     }
 
     fun show() {
