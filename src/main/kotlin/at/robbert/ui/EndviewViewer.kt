@@ -3,6 +3,7 @@ package at.robbert.ui
 import at.robbert.EndviewGame
 import at.robbert.toEndviewChar
 import java.awt.*
+import java.awt.event.*
 import java.awt.geom.AffineTransform
 import javax.swing.JComponent
 import javax.swing.JFrame
@@ -58,12 +59,93 @@ private class EndviewComponent(
             preferredSize = size
         }
 
+    private var selectedCell = -1
+    private val hintFont = Font("Arial Rounded MT Bold", Font.BOLD, 60)
+
+    private val optionFont = Font("Arial Rounded MT Bold", Font.BOLD, 25)
+
     init {
         cellSize = 64f
+
+        selectCell(3, 3)
+
+        isFocusable = true
+        addKeyListener(object : KeyListener {
+            override fun keyTyped(e: KeyEvent?) {
+            }
+
+            override fun keyPressed(e: KeyEvent) {
+                this@EndviewComponent.keyPressed(e)
+            }
+
+            override fun keyReleased(e: KeyEvent?) {
+            }
+
+        })
+        addMouseListener(object : MouseListener {
+            override fun mouseClicked(e: MouseEvent) {
+            }
+
+            override fun mousePressed(e: MouseEvent) {
+                this@EndviewComponent.mouseClicked(e)
+            }
+
+            override fun mouseReleased(e: MouseEvent?) {
+            }
+
+            override fun mouseEntered(e: MouseEvent?) {
+            }
+
+            override fun mouseExited(e: MouseEvent?) {
+            }
+        })
+        addMouseMotionListener(object : MouseMotionListener {
+            override fun mouseDragged(e: MouseEvent) {
+            }
+
+            override fun mouseMoved(e: MouseEvent?) {
+            }
+        })
+        game.addUpdateListener {
+            repaint()
+        }
     }
 
-    private val hintFont = Font("Arial Rounded MT Bold", Font.BOLD, 60)
-    private val optionFont = Font("Arial Rounded MT Bold", Font.BOLD, 25)
+    private fun mouseClicked(mouseEvent: MouseEvent) {
+        val scale = cellSize / 100.0
+
+        val scaledX = (mouseEvent.x / scale) - 100
+        val scaledY = (mouseEvent.y / scale) - 100
+
+        val cellX = scaledX / 100
+        val cellY = scaledY / 100
+
+        selectCell(cellX.toInt(), cellY.toInt())
+        repaint()
+    }
+
+    fun keyPressed(e: KeyEvent) {
+        if (selectedCell >= 0) {
+            val x = selectedCell % game.size
+            val y = selectedCell / game.size
+
+            val char = e.keyChar
+            if (char in 'a'..'z' || char == ' ') {
+                val selectedChar = when (char) {
+                    in 'a'..'z' -> (char - 'a') + 1
+                    ' ' -> 0
+                    else -> error("Shouldn't happen")
+                }
+
+                if (selectedChar in 0..game.letters) {
+                    game.toggleOptions(
+                        x, y, selectedChar
+                    )
+                    game.setLetter(x, y, game.optionsAt(x, y).singleOrNull())
+                }
+            }
+        }
+    }
 
     override fun paint(g: Graphics?) {
         val g2 = g as Graphics2D
@@ -132,15 +214,20 @@ private class EndviewComponent(
     }
 
     private fun paintGameCell(g2: Graphics2D, cellX: Int, cellY: Int) {
-        g2.paint = Color.WHITE
+        if (isCellSelected(cellX, cellY)) {
+            g2.paint = Color.LIGHT_GRAY
+        } else {
+            g2.paint = Color.WHITE
+        }
         g2.fillRect(0, 0, 100, 100)
 
         g2.paint = Color.BLACK
-        g2.font = optionFont
         val setLetter = game.letterAt(cellX, cellY)
         if (setLetter != null) {
+            g2.font = hintFont
             g2.drawStringCenteredInRect(setLetter.toEndviewChar().toString(), Rectangle(0, 0, 100, 100))
         } else {
+            g2.font = optionFont
             val options = game.optionsAt(cellX, cellY)
             val lettersInLine = ceil(sqrt(game.letters + 1f)).roundToInt()
             val lines = ceil((game.letters + 1f) / lettersInLine).roundToInt()
@@ -165,6 +252,21 @@ private class EndviewComponent(
                     )
                 }
             }
+        }
+    }
+
+    fun isCellSelected(cellX: Int, cellY: Int): Boolean {
+        return selectedCell == cellX + cellY * game.size
+    }
+
+    fun selectCell(cellX: Int, cellY: Int): Boolean {
+        val cellIndex = cellX + cellY * game.size
+        return if (selectedCell == cellIndex) {
+            selectedCell = -1
+            false
+        } else {
+            selectedCell = cellIndex
+            true
         }
     }
 

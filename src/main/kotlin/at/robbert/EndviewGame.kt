@@ -6,19 +6,9 @@ class EndviewGame(
     hints: String,
 ) {
     private val setLetters = IntArray(size * size) { -1 }
-    private val options = mutableMapOf<Int, List<Int>>()
+    private val options = mutableMapOf<Int, MutableSet<Int>>()
 
-    fun letterAt(cellX: Int, cellY: Int): Int? {
-        val l = setLetters[cellX + cellY * size]
-        return if (l >= 0)
-            l
-        else
-            null
-    }
-
-    fun optionsAt(cellX: Int, cellY: Int): List<Int> {
-        return options[cellX + cellY * size] ?: emptyList()
-    }
+    private val updateListeners = mutableListOf<() -> Unit>()
 
     val northHints: List<Int>
     val southHints: List<Int>
@@ -34,6 +24,51 @@ class EndviewGame(
         southHints = hints(1)
         westHints = hints(2)
         eastHints = hints(3)
+    }
+
+    fun letterAt(x: Int, y: Int): Int? {
+        val l = setLetters[x + y * size]
+        return if (l >= 0)
+            l
+        else
+            null
+    }
+
+    fun optionsAt(x: Int, y: Int): Set<Int> {
+        return options[x + y * size] ?: emptySet()
+    }
+
+    fun toggleOptions(x: Int, y: Int, char: Int): Boolean {
+        require(char == 0 || char in 1..letters)
+
+        val set = options.computeIfAbsent(x + y * size) {
+            mutableSetOf()
+        }
+
+        return if (char in set) {
+            set.remove(char)
+            false
+        } else {
+            set.add(char)
+            true
+        }.also {
+            updated()
+        }
+    }
+
+    fun setLetter(x: Int, y: Int, letter: Int?) {
+        setLetters[x + y * size] = letter ?: -1
+        updated()
+    }
+
+    private fun updated() {
+        updateListeners.forEach { listener ->
+            listener()
+        }
+    }
+
+    fun addUpdateListener(listener: () -> Unit) {
+        updateListeners += listener
     }
 }
 
