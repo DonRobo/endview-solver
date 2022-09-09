@@ -22,6 +22,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.9.1")
     implementation("com.github.salomonbrys.kotson:kotson:2.5.0")
 
+    implementation("org.jdatepicker:jdatepicker:1.3.4")
+
     testImplementation(kotlin("test"))
 }
 
