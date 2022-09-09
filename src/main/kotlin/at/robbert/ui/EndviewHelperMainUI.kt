@@ -81,11 +81,32 @@ class EndviewHelperMainUI {
         val getHint = JButton("Get hint")
         sidePanel.add(getHint)
 
+        val reset = JButton("Reset")
+        sidePanel.add(reset)
+
+        val solve = JButton("Solve")
+        sidePanel.add(solve)
+
+        solve.addActionListener {
+            game?.let { g ->
+                EndviewHintGenerator(g).solveStep()
+            }
+        }
+        reset.addActionListener {
+            game?.let { g ->
+                for (y in 0 until g.size) {
+                    for (x in 0 until g.size) {
+                        g.setOptions(x, y, setOf())
+                        g.setLetter(x, y, null)
+                    }
+                }
+            }
+        }
         getHint.addActionListener {
             val game = this.game ?: return@addActionListener
             val readOnlyGame = ReadonlyEndviewGame(game)
             val hintGen = EndviewHintGenerator(readOnlyGame)
-            hintGen.generateSomeHints()
+            hintGen.solveStep()
             println("Got ${readOnlyGame.attemptedChanges.distinct().size} hints")
             if (readOnlyGame.attemptedChanges.isNotEmpty())
                 gameComponent?.let { gc ->

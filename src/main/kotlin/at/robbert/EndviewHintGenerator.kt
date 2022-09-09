@@ -6,8 +6,8 @@ class EndviewHintGenerator(
     private val game: IEndviewGame,
 ) {
 
-    fun generateSomeHints() {
-        if (fillGameOut()) {
+    fun solveStep() {
+        if (fillEmptyCells()) {
             println("Found empty cells")
         } else if (removeOptionsWhereLetterAlreadySet()) {
             println("Found letters already set that removed adjacent options")
@@ -274,13 +274,14 @@ class EndviewHintGenerator(
         return updated
     }
 
-    private fun fillGameOut(): Boolean {
+    fun fillEmptyCells(): Boolean {
         var updated = false
         for (y in 0 until game.size) {
             for (x in 0 until game.size) {
                 if (game.optionsAt(x, y).isEmpty()) {
-                    game.setOptions(x, y, (0..game.letters).toSet())
-                    updated = true
+                    game.setOptions(x, y, (0..game.letters).toSet()).also {
+                        if (it) updated = true
+                    }
                 }
             }
         }
@@ -328,11 +329,6 @@ class EndviewHintGenerator(
         return updated
     }
 }
-
-
-private data class Int2(
-    val x: Int, val y: Int
-)
 
 private fun IEndviewGame.optionsAt(coord: Int2) = this.optionsAt(coord.x, coord.y)
 private fun IEndviewGame.setOptions(coord: Int2, options: Set<Int>) = this.setOptions(coord.x, coord.y, options)

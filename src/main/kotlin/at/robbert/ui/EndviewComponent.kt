@@ -1,8 +1,6 @@
 package at.robbert.ui
 
-import at.robbert.EndviewGame
-import at.robbert.EndviewHintGenerator
-import at.robbert.toEndviewChar
+import at.robbert.*
 import java.awt.*
 import java.awt.event.*
 import java.awt.geom.AffineTransform
@@ -40,15 +38,7 @@ class EndviewComponent(
             }
 
             override fun keyPressed(e: KeyEvent) {
-                if (e.keyChar == 'r') {
-                    for (y in 0 until game.size) {
-                        for (x in 0 until game.size) {
-                            game.setOptions(x, y, setOf())
-                            game.setLetter(x, y, null)
-                        }
-                    }
-                } else
-                    this@EndviewComponent.keyPressed(e)
+                this@EndviewComponent.keyPressed(e)
             }
 
             override fun keyReleased(e: KeyEvent?) {
@@ -60,11 +50,7 @@ class EndviewComponent(
             }
 
             override fun mousePressed(e: MouseEvent) {
-                if (e.button == MouseEvent.BUTTON1)
-                    this@EndviewComponent.mouseClicked(e)
-                else {
-                    EndviewHintGenerator(game).generateSomeHints()
-                }
+                this@EndviewComponent.mouseClicked(e)
             }
 
             override fun mouseReleased(e: MouseEvent?) {
@@ -94,10 +80,26 @@ class EndviewComponent(
         val scaledX = (mouseEvent.x / scale) - 100
         val scaledY = (mouseEvent.y / scale) - 100
 
-        val cellX = scaledX / 100
-        val cellY = scaledY / 100
+        val cellX = (scaledX / 100).toInt()
+        val cellY = (scaledY / 100).toInt()
 
-        toggleSelectCell(cellX.toInt(), cellY.toInt())
+        when (mouseEvent.button) {
+            MouseEvent.BUTTON1 -> toggleSelectCell(cellX, cellY)
+            MouseEvent.BUTTON2 -> solveCell(cellX, cellY).also { selectCell(cellX, cellY) }
+            MouseEvent.BUTTON3 -> clearCell(cellX, cellY).also { selectCell(cellX, cellY) }
+        }
+    }
+
+    private fun solveCell(cellX: Int, cellY: Int) {
+        EndviewHintGenerator(game).fillEmptyCells()
+
+        val maskedGame = MaskedEndviewGame(game, setOf(Int2(cellX, cellY)))
+        EndviewHintGenerator(maskedGame).solveStep()
+    }
+
+    private fun clearCell(cellX: Int, cellY: Int) {
+        game.setOptions(cellX, cellY, emptySet())
+        game.setLetter(cellX, cellY, null)
     }
 
     fun keyPressed(e: KeyEvent) {
