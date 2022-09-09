@@ -15,6 +15,8 @@ class EndviewHintGenerator(
             println("Found options to remove using hints")
         } else if (findSingleOptions()) {
             println("Found rows/columns with only one position for a letter")
+        } else if (findMustBeEmpty()) {
+            println("Found rows/columns with only one combination of empty spaces")
         } else if (removeEmptyOptionsWherePossible()) {
             println("Could remove some empty options by counting already set empty cells")
         } else if (findPairs()) {
@@ -25,6 +27,43 @@ class EndviewHintGenerator(
 
         setLettersWherePossible()
     }
+
+    private fun findMustBeEmpty(): Boolean {
+        var updated = false
+        applyFindMustBeEmpty { x, y -> Int2(x, y) }.also {
+            if (it) updated = true
+        }
+        applyFindMustBeEmpty { x, y -> Int2(y, x) }.also {
+            if (it) updated = true
+        }
+        return updated
+    }
+
+    private fun applyFindMustBeEmpty(coordinate: (Int, Int) -> Int2): Boolean {
+        var updated = false
+
+        val emptiesRequired = game.size - game.letters
+        for (y in 0 until game.size) {
+            var emptiesFound = 0
+            for (x in 0 until game.size) {
+                if (0 in game.optionsAt(coordinate(x, y))) {
+                    emptiesFound++
+                }
+            }
+            if (emptiesFound <= emptiesRequired) {
+                for (x in 0 until game.size) {
+                    if (0 in game.optionsAt(coordinate(x, y))) {
+                        game.setOptions(coordinate(x, y), setOf(0)).also {
+                            if (it) updated = true
+                        }
+                    }
+                }
+            }
+        }
+
+        return updated
+    }
+
 
     private fun findPairs(): Boolean {
         var updated = false

@@ -1,19 +1,19 @@
 package at.robbert
 
 class EndviewGame(
-    val size: Int,
-    val letters: Int,
+    override val size: Int,
+    override val letters: Int,
     hints: String,
-) {
+) : IEndviewGame {
     private val setLetters = IntArray(size * size) { -1 }
     private val options = mutableMapOf<Int, MutableSet<Int>>()
 
     private val updateListeners = mutableListOf<() -> Unit>()
 
-    val northHints: List<Int>
-    val southHints: List<Int>
-    val westHints: List<Int>
-    val eastHints: List<Int>
+    override val northHints: List<Int>
+    override val southHints: List<Int>
+    override val westHints: List<Int>
+    override val eastHints: List<Int>
 
     init {
         fun hints(i: Int): List<Int> {
@@ -26,7 +26,7 @@ class EndviewGame(
         eastHints = hints(3)
     }
 
-    fun letterAt(x: Int, y: Int): Int? {
+    override fun letterAt(x: Int, y: Int): Int? {
         val l = setLetters[x + y * size]
         return if (l >= 0)
             l
@@ -34,7 +34,7 @@ class EndviewGame(
             null
     }
 
-    fun optionsAt(x: Int, y: Int): Set<Int> {
+    override fun optionsAt(x: Int, y: Int): Set<Int> {
         return options[x + y * size] ?: emptySet()
     }
 
@@ -42,7 +42,7 @@ class EndviewGame(
         mutableSetOf()
     }
 
-    fun toggleOptions(x: Int, y: Int, char: Int): Boolean {
+    override fun toggleOptions(x: Int, y: Int, char: Int): Boolean {
         require(char.isValidChar())
 
         val set = getMutableOptions(x, y)
@@ -58,7 +58,7 @@ class EndviewGame(
         }
     }
 
-    fun setOptions(x: Int, y: Int, options: Set<Int>): Boolean {
+    override fun setOptions(x: Int, y: Int, options: Set<Int>): Boolean {
         require(options.all { it.isValidChar() })
 
         val oldOptions = this.options[x + y * size]
@@ -71,7 +71,7 @@ class EndviewGame(
         }
     }
 
-    fun removeOptions(x: Int, y: Int, options: Set<Int>): Boolean {
+    override fun removeOptions(x: Int, y: Int, options: Set<Int>): Boolean {
         require(options.all { it.isValidChar() })
 
         return getMutableOptions(x, y).removeAll(options).also {
@@ -80,9 +80,9 @@ class EndviewGame(
         }
     }
 
-    val allOptions = (0..letters).toSet()
+    override val allOptions = (0..letters).toSet()
 
-    fun setLetter(x: Int, y: Int, letter: Int?): Boolean {
+    override fun setLetter(x: Int, y: Int, letter: Int?): Boolean {
         val prev = setLetters[x + y * size]
         setLetters[x + y * size] = letter ?: -1
         return if (prev != setLetters[x + y * size]) {
@@ -99,7 +99,7 @@ class EndviewGame(
         }
     }
 
-    fun addUpdateListener(listener: () -> Unit) {
+    override fun addUpdateListener(listener: () -> Unit) {
         updateListeners += listener
     }
 
