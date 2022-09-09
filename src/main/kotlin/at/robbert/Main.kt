@@ -4,7 +4,7 @@ import at.robbert.ui.EndviewViewer
 
 fun main() {
     val downloader = WordleGameDownloader("daily-puzzles-2022-09-09.json")
-    val decrypted = decrypt(downloader.getPuzzles("endview")[1])
+    val decrypted = decrypt(downloader.getPuzzles("endview")[2])
 
     val props = wordleGameProperties(decrypted)
 

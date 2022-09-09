@@ -27,6 +27,8 @@ class EndviewGame(
     }
 
     override fun letterAt(x: Int, y: Int): Int? {
+        requireValidCoordinates(x, y)
+
         val l = setLetters[x + y * size]
         return if (l >= 0)
             l
@@ -35,6 +37,8 @@ class EndviewGame(
     }
 
     override fun optionsAt(x: Int, y: Int): Set<Int> {
+        requireValidCoordinates(x, y)
+
         return options[x + y * size] ?: emptySet()
     }
 
@@ -44,6 +48,7 @@ class EndviewGame(
 
     override fun toggleOptions(x: Int, y: Int, char: Int): Boolean {
         require(char.isValidChar())
+        requireValidCoordinates(x, y)
 
         val set = getMutableOptions(x, y)
 
@@ -60,6 +65,7 @@ class EndviewGame(
 
     override fun setOptions(x: Int, y: Int, options: Set<Int>): Boolean {
         require(options.all { it.isValidChar() })
+        requireValidCoordinates(x, y)
 
         val oldOptions = this.options[x + y * size]
         this.options[x + y * size] = options.toMutableSet()
@@ -72,6 +78,7 @@ class EndviewGame(
     }
 
     override fun removeOptions(x: Int, y: Int, options: Set<Int>): Boolean {
+        requireValidCoordinates(x, y)
         require(options.all { it.isValidChar() })
 
         return getMutableOptions(x, y).removeAll(options).also {
@@ -83,6 +90,9 @@ class EndviewGame(
     override val allOptions = (0..letters).toSet()
 
     override fun setLetter(x: Int, y: Int, letter: Int?): Boolean {
+        requireValidCoordinates(x, y)
+        letter?.let { require(it.isValidChar()) }
+
         val prev = setLetters[x + y * size]
         setLetters[x + y * size] = letter ?: -1
         return if (prev != setLetters[x + y * size]) {
@@ -91,6 +101,11 @@ class EndviewGame(
         } else {
             false
         }
+    }
+
+    private fun requireValidCoordinates(x: Int, y: Int) {
+        require(x in 0 until size)
+        require(y in 0 until size)
     }
 
     private fun updated() {

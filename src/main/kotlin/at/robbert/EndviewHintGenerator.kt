@@ -293,6 +293,8 @@ class EndviewHintGenerator(
         var found = false
         var index = 0
         do {
+            if (index >= game.size) return false
+
             val coord = coordinate(index)
             index++
             val opts = game.optionsAt(coord)
@@ -312,6 +314,8 @@ class EndviewHintGenerator(
         index = game.size - 1
         val cells = mutableListOf<Set<Int>>()
         while (!cells.canContainAllOf(game.allOptions - setOf(hint, 0))) {
+            if (index < 0) return false
+
             val coord = coordinate(index)
             index--
             cells += game.optionsAt(coord)
