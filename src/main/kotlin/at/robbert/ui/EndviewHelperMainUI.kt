@@ -1,7 +1,6 @@
 package at.robbert.ui
 
-import at.robbert.EndviewGameFactory
-import at.robbert.WordleGameDownloader
+import at.robbert.*
 import org.jdatepicker.impl.JDatePanelImpl
 import org.jdatepicker.impl.JDatePickerImpl
 import org.jdatepicker.impl.UtilDateModel
@@ -13,6 +12,8 @@ import javax.swing.*
 import javax.swing.JFormattedTextField.AbstractFormatter
 
 class EndviewHelperMainUI {
+    private var gameComponent: EndviewComponent? = null
+    private var game: EndviewGame? = null
     private val frame = JFrame("Endview")
     private val centerPanel = JPanel()
     private val sidePanel = JPanel()
@@ -68,12 +69,33 @@ class EndviewHelperMainUI {
         gamePicker.addItemListener {
             if (it.stateChange == ItemEvent.SELECTED) {
                 if (gamePicker.selectedIndex in gameOptions.indices) {
-                    setCenter(EndviewComponent(EndviewGameFactory.createEndviewGame(gameOptions[gamePicker.selectedIndex])))
+                    this.game = EndviewGameFactory.createEndviewGame(gameOptions[gamePicker.selectedIndex])
+                    this.gameComponent = EndviewComponent(this.game!!)
+                    setCenter(this.gameComponent!!)
                     frame.pack()
                 }
             }
         }
         sidePanel.add(gamePicker)
+
+        val getHint = JButton("Get hint")
+        sidePanel.add(getHint)
+
+        getHint.addActionListener {
+            val game = this.game ?: return@addActionListener
+            val readOnlyGame = ReadonlyEndviewGame(game)
+            val hintGen = EndviewHintGenerator(readOnlyGame)
+            hintGen.generateSomeHints()
+            println("Got ${readOnlyGame.attemptedChanges.distinct().size} hints")
+            if (readOnlyGame.attemptedChanges.isNotEmpty())
+                gameComponent?.let { gc ->
+                    readOnlyGame.attemptedChanges.distinct().random().let { coord ->
+                        gc.selectCell(coord.x, coord.y)
+                    }
+                }
+            else
+                gameComponent?.deselectCell()
+        }
 
         datePicker.model.addChangeListener {
             val value = datePicker.model.value ?: return@addChangeListener

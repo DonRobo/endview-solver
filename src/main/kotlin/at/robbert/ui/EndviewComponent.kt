@@ -97,8 +97,7 @@ class EndviewComponent(
         val cellX = scaledX / 100
         val cellY = scaledY / 100
 
-        selectCell(cellX.toInt(), cellY.toInt())
-        repaint()
+        toggleSelectCell(cellX.toInt(), cellY.toInt())
     }
 
     fun keyPressed(e: KeyEvent) {
@@ -236,15 +235,40 @@ class EndviewComponent(
         return selectedCell == cellX + cellY * game.size
     }
 
-    fun selectCell(cellX: Int, cellY: Int): Boolean {
-        val cellIndex = cellX + cellY * game.size
-        return if (selectedCell == cellIndex) {
-            selectedCell = -1
+    fun toggleSelectCell(cellX: Int, cellY: Int): Boolean {
+        require(cellX in 0 until game.size)
+        require(cellY in 0 until game.size)
+
+        return if (isCellSelected(cellX, cellY)) {
+            deselectCell()
             false
         } else {
-            selectedCell = cellIndex
+            selectCell(cellX, cellY)
             true
         }
+    }
+
+    fun selectCell(cellX: Int, cellY: Int): Boolean {
+        require(cellX in 0 until game.size)
+        require(cellY in 0 until game.size)
+
+        val cellIndex = cellX + cellY * game.size
+        val wasAlreadySelected = selectedCell == cellIndex
+        selectedCell = cellIndex
+
+        grabFocus()
+        if (!wasAlreadySelected) repaint()
+        return !wasAlreadySelected
+    }
+
+    fun deselectCell(): Boolean {
+        val wasSelected = selectedCell >= 0
+
+        selectedCell = -1
+
+        if (wasSelected) repaint()
+
+        return wasSelected
     }
 
     private fun Graphics2D.drawStringCenteredInRect(text: String, rectangle: Rectangle) {

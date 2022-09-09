@@ -3,7 +3,7 @@ package at.robbert
 import at.robbert.util.canContainAllOf
 
 class EndviewHintGenerator(
-    val game: EndviewGame,
+    private val game: IEndviewGame,
 ) {
 
     fun generateSomeHints() {
@@ -334,7 +334,7 @@ private data class Int2(
     val x: Int, val y: Int
 )
 
-private fun EndviewGame.optionsAt(coord: Int2) = this.optionsAt(coord.x, coord.y)
-private fun EndviewGame.setOptions(coord: Int2, options: Set<Int>) = this.setOptions(coord.x, coord.y, options)
-private fun EndviewGame.removeOptions(coord: Int2, options: Set<Int>) = this.removeOptions(coord.x, coord.y, options)
-private fun EndviewGame.letterAt(coord: Int2) = this.letterAt(coord.x, coord.y)
+private fun IEndviewGame.optionsAt(coord: Int2) = this.optionsAt(coord.x, coord.y)
+private fun IEndviewGame.setOptions(coord: Int2, options: Set<Int>) = this.setOptions(coord.x, coord.y, options)
+private fun IEndviewGame.removeOptions(coord: Int2, options: Set<Int>) = this.removeOptions(coord.x, coord.y, options)
+private fun IEndviewGame.letterAt(coord: Int2) = this.letterAt(coord.x, coord.y)
