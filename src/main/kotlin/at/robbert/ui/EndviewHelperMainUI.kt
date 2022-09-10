@@ -104,7 +104,7 @@ class EndviewHelperMainUI {
         }
         getHint.addActionListener {
             val game = this.game ?: return@addActionListener
-            val readOnlyGame = ReadonlyEndviewGame(game)
+            val readOnlyGame = ReadonlyEndviewGame(FilledOutEndviewGame(game))
             val hintGen = EndviewHintGenerator(readOnlyGame)
             hintGen.solveStep()
             println("Got ${readOnlyGame.attemptedChanges.distinct().size} hints")

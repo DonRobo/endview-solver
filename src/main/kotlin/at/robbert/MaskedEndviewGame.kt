@@ -1,7 +1,7 @@
 package at.robbert
 
 class MaskedEndviewGame(
-    val game: EndviewGame,
+    val game: IEndviewGame,
     val mask: Set<Int2>
 ) : IEndviewGame by game {
 

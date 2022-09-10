@@ -9,7 +9,7 @@ data class AttemptedChange(
 
 
 class ReadonlyEndviewGame(
-    val game: EndviewGame,
+    val game: IEndviewGame,
 ) : IEndviewGame by game {
     private val attemptedChangesInternal: MutableList<AttemptedChange> = mutableListOf()
     val attemptedChanges: List<AttemptedChange> get() = attemptedChangesInternal.toList()

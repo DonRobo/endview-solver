@@ -11,7 +11,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 class EndviewComponent(
-    val game: EndviewGame,
+    val game: IEndviewGame,
 ) : JComponent() {
 
     var cellSize: Float
@@ -83,6 +83,9 @@ class EndviewComponent(
         val cellX = (scaledX / 100).toInt()
         val cellY = (scaledY / 100).toInt()
 
+        if (cellX !in 0 until game.size) return
+        if (cellY !in 0 until game.size) return
+
         when (mouseEvent.button) {
             MouseEvent.BUTTON1 -> toggleSelectCell(cellX, cellY)
             MouseEvent.BUTTON2 -> solveCell(cellX, cellY).also { selectCell(cellX, cellY) }
@@ -91,9 +94,7 @@ class EndviewComponent(
     }
 
     private fun solveCell(cellX: Int, cellY: Int) {
-        EndviewHintGenerator(game).fillEmptyCells()
-
-        val maskedGame = MaskedEndviewGame(game, setOf(Int2(cellX, cellY)))
+        val maskedGame = MaskedEndviewGame(FilledOutEndviewGame(game), setOf(Int2(cellX, cellY)))
         EndviewHintGenerator(maskedGame).solveStep()
     }
 

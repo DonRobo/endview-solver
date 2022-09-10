@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.10"
+    id("org.graalvm.buildtools.native") version "0.9.13"
 }
 
 group = "at.robbert"
@@ -9,6 +10,16 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+}
+
+graalvmNative {
+    toolchainDetection.set(false)
+
+    binaries {
+        named("main") {
+            mainClass.set("at.robbert.RunMainApplicationKt")
+        }
+    }
 }
 
 val ktorVersion = "2.1.0"
