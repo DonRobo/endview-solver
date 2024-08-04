@@ -27,7 +27,7 @@ class WordleGameDownloader(
         } else {
             runBlocking {
                 val client = HttpClient(CIO)
-                val content = client.get("https://wordle.at/spiele/puzzlelists/$jsonName") {}.bodyAsText()
+                val content = client.get("https://gridgames.app/puzzles/puzzlelists/$jsonName") {}.bodyAsText()
                 jsonFile.writeText(content)
                 content
             }

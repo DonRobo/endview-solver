@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.10"
-    id("org.graalvm.buildtools.native") version "0.9.13"
+    application
 }
 
 group = "at.robbert"
@@ -10,16 +10,6 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-}
-
-graalvmNative {
-    toolchainDetection.set(false)
-
-    binaries {
-        named("main") {
-            mainClass.set("at.robbert.RunMainApplicationKt")
-        }
-    }
 }
 
 val ktorVersion = "2.1.0"
@@ -44,4 +34,8 @@ tasks.test {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
+}
+
+application {
+    mainClass.set("at.robbert.RunMainApplicationKt")
 }
