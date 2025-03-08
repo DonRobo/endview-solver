@@ -6,23 +6,37 @@ class EndviewHintGenerator(
     private val game: IEndviewGame,
 ) {
 
+    interface HintListener {
+        fun onHintGenerated(hint: String)
+    }
+
+    private val hintListeners = mutableListOf<HintListener>()
+
+    fun registerHintListener(listener: HintListener) {
+        hintListeners.add(listener)
+    }
+
+    private fun notifyHintListeners(hint: String) {
+        hintListeners.forEach { it.onHintGenerated(hint) }
+    }
+
     fun solveStep() {
         if (fillEmptyCells()) {
-            println("Found empty cells")
+            notifyHintListeners("Found empty cells")
         } else if (removeOptionsWhereLetterAlreadySet()) {
-            println("Found letters already set that removed adjacent options")
+            notifyHintListeners("Found letters already set that removed adjacent options")
         } else if (applyHints()) {
-            println("Found options to remove using hints")
+            notifyHintListeners("Found options to remove using hints")
         } else if (findSingleOptions()) {
-            println("Found rows/columns with only one position for a letter")
+            notifyHintListeners("Found rows/columns with only one position for a letter")
         } else if (findMustBeEmpty()) {
-            println("Found rows/columns with only one combination of empty spaces")
+            notifyHintListeners("Found rows/columns with only one combination of empty spaces")
         } else if (removeEmptyOptionsWherePossible()) {
-            println("Could remove some empty options by counting already set empty cells")
+            notifyHintListeners("Could remove some empty options by counting already set empty cells")
         } else if (findPairs()) {
             //already output in function itself
         } else {
-            println("Nothing more to do")
+            notifyHintListeners("Nothing more to do")
         }
 
         setLettersWherePossible()
@@ -100,7 +114,7 @@ class EndviewHintGenerator(
                         }
                     }
                     if (count > 0) {
-                        println("Removed $count ${letter.toEndviewChar()}s using a pair of ${otherYsToPairWith.size + 1}")
+                        notifyHintListeners("Removed $count ${letter.toEndviewChar()}s using a pair of ${otherYsToPairWith.size + 1}")
                         updated = true
                     }
                 }

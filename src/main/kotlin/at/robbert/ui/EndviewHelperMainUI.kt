@@ -11,12 +11,13 @@ import java.util.*
 import javax.swing.*
 import javax.swing.JFormattedTextField.AbstractFormatter
 
-class EndviewHelperMainUI {
+class EndviewHelperMainUI : EndviewHintGenerator.HintListener {
     private var gameComponent: EndviewComponent? = null
     private var game: EndviewGame? = null
     private val frame = JFrame("Endview")
     private val centerPanel = JPanel()
     private val sidePanel = JPanel()
+    private val hintArea = JTextArea()
 
     private var gameOptions: List<String> = emptyList()
 
@@ -89,7 +90,9 @@ class EndviewHelperMainUI {
 
         solve.addActionListener {
             game?.let { g ->
-                EndviewHintGenerator(g).solveStep()
+                val hintGen = EndviewHintGenerator(g)
+                hintGen.registerHintListener(this)
+                hintGen.solveStep()
             }
         }
         reset.addActionListener {
@@ -106,6 +109,7 @@ class EndviewHelperMainUI {
             val game = this.game ?: return@addActionListener
             val readOnlyGame = ReadonlyEndviewGame(FilledOutEndviewGame(game))
             val hintGen = EndviewHintGenerator(readOnlyGame)
+            hintGen.registerHintListener(this)
             hintGen.solveStep()
             println("Got ${readOnlyGame.attemptedChanges.distinct().size} hints")
             if (readOnlyGame.attemptedChanges.isNotEmpty())
@@ -135,6 +139,14 @@ class EndviewHelperMainUI {
                 }
             })
         }
+
+        hintArea.isEditable = false
+        val hintScrollPane = JScrollPane(hintArea)
+        sidePanel.add(hintScrollPane)
+    }
+
+    override fun onHintGenerated(hint: String) {
+        hintArea.append("$hint\n")
     }
 
     fun show() {
