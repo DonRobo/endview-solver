@@ -20,7 +20,7 @@ dependencies {
 
     implementation("org.openjdk.nashorn:nashorn-core:15.6")
 
-    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.google.code.gson:gson:2.13.1")
     implementation("com.github.salomonbrys.kotson:kotson:2.5.0")
 
     implementation("org.jdatepicker:jdatepicker:1.3.4")
