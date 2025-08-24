@@ -1,6 +1,6 @@
-package at.robbert
+package at.robbert.gridgames
 
-import at.robbert.util.containsAny
+import at.robbert.containsAny
 
 data class AttemptedChange(
     val x: Int,

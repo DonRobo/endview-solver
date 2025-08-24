@@ -1,6 +1,8 @@
-package at.robbert
+package at.robbert.gridgames.endview
 
-import at.robbert.util.canContainAllOf
+import at.robbert.Int2
+import at.robbert.canContainAllOf
+import at.robbert.gridgames.IEndviewGame
 
 class EndviewHintGenerator(
     private val game: IEndviewGame,

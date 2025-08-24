@@ -1,6 +1,5 @@
-package at.robbert.ui
+package at.robbert.gridgames.endview
 
-import at.robbert.EndviewGame
 import java.awt.BorderLayout
 import javax.swing.JFrame
 

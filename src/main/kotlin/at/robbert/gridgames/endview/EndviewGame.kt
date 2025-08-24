@@ -1,4 +1,6 @@
-package at.robbert
+package at.robbert.gridgames.endview
+
+import at.robbert.gridgames.IEndviewGame
 
 class EndviewGame(
     override val size: Int,

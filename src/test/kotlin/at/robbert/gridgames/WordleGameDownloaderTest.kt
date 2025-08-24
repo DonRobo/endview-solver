@@ -1,4 +1,4 @@
-package at.robbert
+package at.robbert.gridgames
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

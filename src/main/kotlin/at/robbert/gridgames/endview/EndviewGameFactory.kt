@@ -1,4 +1,7 @@
-package at.robbert
+package at.robbert.gridgames.endview
+
+import at.robbert.gridgames.decrypt
+import at.robbert.gridgames.wordleGameProperties
 
 object EndviewGameFactory {
 

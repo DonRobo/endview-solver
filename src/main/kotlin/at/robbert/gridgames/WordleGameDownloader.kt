@@ -1,4 +1,4 @@
-package at.robbert
+package at.robbert.gridgames
 
 import com.github.salomonbrys.kotson.array
 import com.github.salomonbrys.kotson.fromJson
@@ -6,6 +6,7 @@ import com.github.salomonbrys.kotson.get
 import com.github.salomonbrys.kotson.string
 import com.google.gson.Gson
 import com.google.gson.JsonElement
+import com.google.gson.JsonSyntaxException
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
@@ -14,6 +15,7 @@ import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 class WordleGameDownloader(
     date: LocalDate,
@@ -21,7 +23,7 @@ class WordleGameDownloader(
     val jsonName: String = date.let { d ->
         val referenceDate = LocalDate.of(2024, 3, 15)
         val referenceId = 1000
-        val daysBetween = java.time.temporal.ChronoUnit.DAYS.between(referenceDate, d)
+        val daysBetween = ChronoUnit.DAYS.between(referenceDate, d)
         (referenceId + daysBetween).toString()
     }
 
@@ -50,9 +52,9 @@ class WordleGameDownloader(
         val gson = Gson()
         try {
             gson.fromJson(jsonString)
-        } catch (e: com.google.gson.JsonSyntaxException) {
+        } catch (e: JsonSyntaxException) {
             jsonFile.delete()
-            throw com.google.gson.JsonSyntaxException("Malformed JSON: $jsonString", e)
+            throw JsonSyntaxException("Malformed JSON: $jsonString", e)
         }
     }
 

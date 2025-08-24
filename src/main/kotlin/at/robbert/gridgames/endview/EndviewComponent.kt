@@ -1,6 +1,9 @@
-package at.robbert.ui
+package at.robbert.gridgames.endview
 
-import at.robbert.*
+import at.robbert.Int2
+import at.robbert.gridgames.FilledOutEndviewGame
+import at.robbert.gridgames.IEndviewGame
+import at.robbert.gridgames.MaskedEndviewGame
 import java.awt.*
 import java.awt.event.*
 import java.awt.geom.AffineTransform

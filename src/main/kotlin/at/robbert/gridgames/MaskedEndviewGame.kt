@@ -1,4 +1,6 @@
-package at.robbert
+package at.robbert.gridgames
+
+import at.robbert.Int2
 
 class MaskedEndviewGame(
     val game: IEndviewGame,

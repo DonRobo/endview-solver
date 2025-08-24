@@ -1,6 +1,8 @@
-package at.robbert.ui
+package at.robbert.gridgames.endview
 
-import at.robbert.*
+import at.robbert.gridgames.FilledOutEndviewGame
+import at.robbert.gridgames.ReadonlyEndviewGame
+import at.robbert.gridgames.WordleGameDownloader
 import org.jdatepicker.impl.JDatePanelImpl
 import org.jdatepicker.impl.JDatePickerImpl
 import org.jdatepicker.impl.UtilDateModel

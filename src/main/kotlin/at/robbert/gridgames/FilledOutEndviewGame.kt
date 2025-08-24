@@ -1,4 +1,4 @@
-package at.robbert
+package at.robbert.gridgames
 
 class FilledOutEndviewGame(val game: IEndviewGame) : IEndviewGame by game {
 

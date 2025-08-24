@@ -1,4 +1,4 @@
-package at.robbert
+package at.robbert.gridgames
 
 interface IEndviewGame {
     val size: Int

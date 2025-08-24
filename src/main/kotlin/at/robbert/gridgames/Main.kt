@@ -1,7 +1,7 @@
-package at.robbert
+package at.robbert.gridgames
 
-import at.robbert.EndviewGameFactory.createEndviewGame
-import at.robbert.ui.EndviewViewer
+import at.robbert.gridgames.endview.EndviewGameFactory.createEndviewGame
+import at.robbert.gridgames.endview.EndviewViewer
 import java.time.LocalDate
 
 fun main() {

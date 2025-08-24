@@ -1,4 +1,4 @@
-package at.robbert
+package at.robbert.gridgames
 
 import javax.script.Invocable
 import javax.script.ScriptEngineManager

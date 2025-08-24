@@ -42,5 +42,5 @@ java {
 }
 
 application {
-    mainClass.set("at.robbert.RunMainApplicationKt")
+    mainClass.set("at.robbert.gridgames.RunMainApplicationKt")
 }
