@@ -24,6 +24,7 @@ dependencies {
     implementation("org.jdatepicker:jdatepicker:1.3.4")
 
     testImplementation(kotlin("test"))
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.4")
 }
 
 tasks.test {

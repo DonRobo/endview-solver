@@ -10,6 +10,8 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
@@ -26,14 +28,25 @@ class WordleGameDownloader(
             jsonFile.readText()
         } else {
             runBlocking {
-                val client = HttpClient(CIO)
-                val content = client.get("https://gridgames.app/puzzles/puzzlelists/$jsonName") {}.bodyAsText()
+                val client = HttpClient(CIO){
+                    expectSuccess = true
+                }
+                val response = client.get("https://gridgames.app/api/games/puzzles/puzzlelists/$jsonName")
+                require(response.contentType()?.match(ContentType.Application.Json) ?: false) {
+                    "Expected JSON response but got ${response.contentType()}"
+                }
+                val content = response.bodyAsText()
                 jsonFile.writeText(content)
                 content
             }
         }
         val gson = Gson()
-        gson.fromJson(jsonString)
+        try {
+            gson.fromJson(jsonString)
+        } catch (e: com.google.gson.JsonSyntaxException) {
+            jsonFile.delete()
+            throw com.google.gson.JsonSyntaxException("Malformed JSON: $jsonString", e)
+        }
     }
 
     fun getPuzzles(game: String): List<String> {
@@ -41,6 +54,12 @@ class WordleGameDownloader(
             it["type"].string.equals(game, ignoreCase = true)
         }["puzzles"].array.map {
             it["puzzlestring"].string
+        }
+    }
+
+    fun getGames(): List<String> {
+        return json["types"].array.map {
+            it["type"].string
         }
     }
 
