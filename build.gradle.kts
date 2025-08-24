@@ -18,7 +18,7 @@ dependencies {
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
-    implementation("org.openjdk.nashorn:nashorn-core:15.6")
+    implementation("org.openjdk.nashorn:nashorn-core:15.7")
 
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("com.github.salomonbrys.kotson:kotson:2.5.0")
