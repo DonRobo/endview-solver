@@ -10,14 +10,21 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
+import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import java.io.File
+import java.time.LocalDate
 
 class WordleGameDownloader(
-    val jsonName: String
+    date: LocalDate,
 ) {
+    val jsonName: String = date.let { d ->
+        val referenceDate = LocalDate.of(2024, 3, 15)
+        val referenceId = 1000
+        val daysBetween = java.time.temporal.ChronoUnit.DAYS.between(referenceDate, d)
+        (referenceId + daysBetween).toString()
+    }
+
     private val json: JsonElement by lazy {
         val jsonFolder = File("jsons")
         if (!jsonFolder.exists()) {
@@ -28,7 +35,7 @@ class WordleGameDownloader(
             jsonFile.readText()
         } else {
             runBlocking {
-                val client = HttpClient(CIO){
+                val client = HttpClient(CIO) {
                     expectSuccess = true
                 }
                 val response = client.get("https://gridgames.app/api/games/puzzles/puzzlelists/$jsonName")

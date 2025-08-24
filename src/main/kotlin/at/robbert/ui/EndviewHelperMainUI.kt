@@ -7,6 +7,8 @@ import org.jdatepicker.impl.UtilDateModel
 import java.awt.BorderLayout
 import java.awt.event.ItemEvent
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneId
 import java.util.*
 import javax.swing.*
 import javax.swing.JFormattedTextField.AbstractFormatter
@@ -119,11 +121,15 @@ class EndviewHelperMainUI {
         }
 
         datePicker.model.addChangeListener {
-            val value = datePicker.model.value ?: return@addChangeListener
+            val value = datePicker.model.value as? Date ?: return@addChangeListener
 
-            val format = SimpleDateFormat("yyyy-MM-dd")
             val puzzles =
-                WordleGameDownloader("daily-puzzles-${format.format(value)}.json").getPuzzles("endview")
+                WordleGameDownloader(
+                    LocalDate.ofInstant(
+                        value.toInstant(),
+                        ZoneId.systemDefault()
+                    )
+                ).getPuzzles("endview")
             this.gameOptions = puzzles
             gameModel.removeAllElements()
             gameModel.addAll(List(gameOptions.size) { index ->
