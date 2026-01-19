@@ -21,7 +21,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.1")
     implementation("com.github.salomonbrys.kotson:kotson:2.5.0")
 
-    implementation("org.jdatepicker:jdatepicker:1.3.4")
+    implementation("org.jdatepicker:jdatepicker:2.0.1")
 
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.4")
